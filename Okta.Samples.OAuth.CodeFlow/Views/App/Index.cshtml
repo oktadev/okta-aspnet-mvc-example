@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Claims";
+}
+
+<h2>My Claims from the UserInfo Okta endpoint</h2>
+<b>(includes id, access and refresh token)</b>
+<dl>
+    @foreach (var claim in System.Security.Claims.ClaimsPrincipal.Current.Claims)
+    {
+        <dt>
+            @claim.Type
+        </dt>
+
+        <dd>
+            @claim.Value
+        </dd>
+    }
+</dl>
+
+@*<p>
+    @Html.ActionLink("Call service", "CallService")
+</p>
+
+<p>
+    @Html.ActionLink("Refresh token", "RefreshToken")
+</p>
+
+<p>
+    @Html.ActionLink("Revoke access token", "RevokeAccessToken")
+</p>
+
+<p>
+    @Html.ActionLink("Revoke refresh token", "RevokeRefreshToken")
+</p>*@
+

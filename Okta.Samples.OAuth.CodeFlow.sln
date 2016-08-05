@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{65DCED10-3AEB-4297-8C71-4DFA0BB50391}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{8D050E03-FF24-404E-8E5D-10AD9CB27B02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Okta.Samples.OAuth.CodeFlow", "Okta.Samples.OAuth.CodeFlow\Okta.Samples.OAuth.CodeFlow.csproj", "{8D55C09E-77EA-43AD-A70D-004B040B5A63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Licenses", "Licenses", "{1236EB01-198D-4118-BDCB-C2192368C9AD}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		THIRD_PARTY_NOTICES = THIRD_PARTY_NOTICES
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8D050E03-FF24-404E-8E5D-10AD9CB27B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D050E03-FF24-404E-8E5D-10AD9CB27B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D050E03-FF24-404E-8E5D-10AD9CB27B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D050E03-FF24-404E-8E5D-10AD9CB27B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D55C09E-77EA-43AD-A70D-004B040B5A63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D55C09E-77EA-43AD-A70D-004B040B5A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D55C09E-77EA-43AD-A70D-004B040B5A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D55C09E-77EA-43AD-A70D-004B040B5A63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

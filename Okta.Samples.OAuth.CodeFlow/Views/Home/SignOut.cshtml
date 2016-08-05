@@ -1,0 +1,85 @@
+﻿@{
+    ViewBag.Title = "Sign Out";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript">
+
+    var oktaOrgUrl = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthAuthority"]';
+    var sessionTokenKey = 'sessionToken';
+
+    signOut();
+
+    function signOut() {
+        console.log('signing out from Okta');
+        oktaSessionsMe(function (authenticated) {
+            if (authenticated) {
+                var sessionToken;
+                var sessionTokenString = sessionStorage.getItem(sessionTokenKey);
+                if (sessionTokenString) {
+                    sessionToken = JSON.parse(sessionTokenString);
+                    console.log(sessionToken);
+                    var sessionId = sessionToken.id;
+                    console.log('closing session ' + sessionId);
+                    closeSession(function (success) {
+                        console.log('Is session closed? ' + success);
+                    })
+                }
+            }
+        });
+    }
+
+    function oktaSessionsMe(callBack) {
+        $.ajax({
+            type: "GET",
+            dataType: 'json',
+            url: oktaOrgUrl + "/api/v1/sessions/me",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                console.log('setting success to true');
+                console.log("My session: ");
+                console.log(data);
+                sessionStorage.setItem(sessionTokenKey, JSON.stringify(data));
+                return callBack(true);
+                //$('#logged-in-res').text(data);
+            },
+            error: function (textStatus, errorThrown) {
+                console.log('setting success to false');
+                //$('#logged-in-res').text("You must be logged in to call this API");
+                return callBack(false);
+            },
+            async: true
+        });
+    }
+
+    function closeSession(callback) {
+        $.ajax({
+            type: "DELETE",
+            dataType: 'json',
+            url: oktaOrgUrl + "/api/v1/sessions/me",
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                console.log('success deleting session');
+                console.log(data);
+                console.log('removing session from sessionStorage');
+                sessionStorage.removeItem(sessionTokenKey);
+                console.log('removed session from sessionStorage');
+                return callback(true);
+            },
+            error: function (textStatus, errorThrown) {
+                console.log('error deleting session: ' + JSON.stringify(textStatus));
+                console.log(errorThrown);
+                return callback(false);
+            },
+            async: true
+        });
+    }
+</script>
+
+<p>You are signed out</p>

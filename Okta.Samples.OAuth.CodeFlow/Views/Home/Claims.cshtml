@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "Claims";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model IEnumerable<System.Security.Claims.Claim>
+
+
+<h2>OpenIDConnect Claims</h2>
+
+<dl>
+    @foreach (var claim in Model)
+    {
+        <dt>@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
+</dl>
+
+
