@@ -42,7 +42,7 @@ namespace Api
 
             var clientID = WebConfigurationManager.AppSettings["okta:ClientId"];
             var issuer = WebConfigurationManager.AppSettings["okta:TenantUrl"];
-            var authorizationServerIssuer = WebConfigurationManager.AppSettings["okta:ASAudience"];
+            var authorizationServerIssuer = WebConfigurationManager.AppSettings["okta:ASIssuer"];
 
             TokenValidationParameters tvps = new TokenValidationParameters
             {
