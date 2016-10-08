@@ -52,7 +52,6 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
 
             ViewBag.Error = Request.QueryString["error"] ?? "none";
 
-
             var response = await GetTokenFromAuthServer();
 
             return View("Token", response);

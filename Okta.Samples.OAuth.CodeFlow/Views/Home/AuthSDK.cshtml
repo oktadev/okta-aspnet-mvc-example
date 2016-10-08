@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "AuthSDK";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700|Lato:400,100,300,700,900' rel='stylesheet' type='text/css'>
+
+<!-- Main Styles -->
+<link rel="stylesheet" href="~/Content/animate.css">
+<link rel="stylesheet" href="~/Content/oidc-main.css">
+
+<!-- App Script -->
+<script data-main="/Scripts/app" src="~/Scripts/require.js"></script>
+<!-- Syntax Highlighting Script -->
+<script src="~/Scripts/highlight.min.js"></script>
+<link rel="stylesheet" href="~/Content/highlight.min.css">
+
+<h2>Okta Auth SDK</h2>
+
+<div class="container">
+    <div class="top">
+
+    </div>
+    <div class="login-box animated fadeInUp">
+        <div class="box-header">
+            <h2>OpenID Connect Sign In</h2>
+        </div>
+        <div class="form">
+            <div id="sign-in-form">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+                <button id="btn-sign-in" type="submit" class="button">Sign In</button>
+            </div>
+            <div id="authenticated-buttons">
+                <button id="btn-signout" type="submit" class="button">Sign Out</button>
+                <button id="btn-refresh" type="submit" class="button">Renew ID Token</button>
+                <button id="btn-api-request" type="submit" class="button">Call Resource Server (API)</button>
+            </div>
+        </div>
+    </div>
+</div>
+

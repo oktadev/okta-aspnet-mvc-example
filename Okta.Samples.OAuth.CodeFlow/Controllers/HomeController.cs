@@ -65,5 +65,18 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
             return View();
         }
 
+        public ActionResult SignInWidget()
+        {
+            ViewBag.Message = "Authorization Code Flow with Okta Sign-in Widget";
+
+            return View();
+        }
+
+        public ActionResult AuthSDK()
+        {
+            ViewBag.Message = "Authorization Code Flow with Okta Auth JS SDK";
+
+            return View();
+        }
     }
 }
