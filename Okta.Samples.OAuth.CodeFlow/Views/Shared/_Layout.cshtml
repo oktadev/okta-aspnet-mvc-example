@@ -24,12 +24,12 @@
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
                     @*@if (!User.Identity.IsAuthenticated)
                     {*@
-                    <li>@Html.ActionLink("Sign In (Okta)", "Tokens", "Callback")</li>
+                    <li>@Html.ActionLink("Sign In (Redirect)", "Tokens", "Callback")</li>
                     <li>@Html.ActionLink("Sign In (Widget)", "SignInWidget", "Home")</li>
                     <li>@Html.ActionLink("Sign In (Auth SDK)", "AuthSDK", "Home")</li>
-                    }
+                    @*}
                     else
-                    {
+                    {*@
                     <li>@Html.ActionLink("My Claims", "Index", "App")</li>
                     <li>@Html.ActionLink("Call API", "GetProtectedResource", "CallApi")</li>
                     <li>@Html.ActionLink("Sign Out", "SignOut", "Home")</li>

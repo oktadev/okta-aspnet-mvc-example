@@ -1,26 +1,42 @@
-﻿
-@{
-    ViewBag.Title = "AuthSDK";
+﻿@{
+    ViewBag.Title = "Auth JavaScript SDK";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700|Lato:400,100,300,700,900' rel='stylesheet' type='text/css'>
 
-<!-- Main Styles -->
+<!-- Main Styles 
 <link rel="stylesheet" href="~/Content/animate.css">
 <link rel="stylesheet" href="~/Content/oidc-main.css">
-
+    -->
 <!-- App Script -->
-<script data-main="/Scripts/app" src="~/Scripts/require.js"></script>
-<!-- Syntax Highlighting Script -->
-<script src="~/Scripts/highlight.min.js"></script>
-<link rel="stylesheet" href="~/Content/highlight.min.css">
+@*<script data-main="/Scripts/app" src="~/Scripts/require.js"></script>*@
 
-<h2>Okta Auth SDK</h2>
+<!-- Syntax Highlighting Script -->
+@*<script src="~/Scripts/highlight.min.js"></script>*@
+@*<link rel="stylesheet" href="~/Content/highlight.min.css">*@
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+<script src="/Scripts/OktaAuth.min.js"></script>
+
+
+<script type="text/javascript">
+    var oktaOrgUrl = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthAuthority"]';
+    var oauthClientId = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthClientId"]';
+    var oauthRedirectUri = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthRedirectUri"]';
+    var oAuthScopesAsString = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthScopes"]';
+    var oauthScopes = oAuthScopesAsString.split(' ');
+    var oAuthResponseTypeAsString = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthResponseType"]';
+    var oAuthResponseType = oAuthResponseTypeAsString.split(' ');
+    var oauthResponseMode = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthResponseMode"]';
+</script>
+
+<script src="/Scripts/app.js"></script>
+
+<h2>Okta Auth JS SDK</h2>
 
 <div class="container">
     <div class="top">
-
     </div>
     <div class="login-box animated fadeInUp">
         <div class="box-header">

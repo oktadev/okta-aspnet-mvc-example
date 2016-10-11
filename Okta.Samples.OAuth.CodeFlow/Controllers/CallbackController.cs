@@ -28,42 +28,76 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
     public class CallbackController : Controller
     {
 
-        public ActionResult Index()
+        private const string OKTA_OAUTH_REDIRECT_PARAMS_COOKIE = "okta-oauth-redirect-params";
+
+        /// <summary>
+        /// Callback method used by the Auth SDK and Okta Sign In Widget pages
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionResult> Index()
         {
+            ViewBag.Code = Request.QueryString["code"] ?? "none";
+
+            ViewBag.Error = Request.QueryString["error"] ?? "none";
+
+            if (ViewBag.Code != "none")
+            {
+                TokenResponse response = await ExchangeCodeForTokens(ViewBag.Code);
+
+                return View("Tokens", response);
+            }
+
             return View();
         }
+
+        /// <summary>
+        /// Callback method used by the Redirect to Okta Sign-In page
+        /// </summary>
+        /// <returns></returns>
+
         [HttpPost]
         public async Task<ActionResult> Index(FormCollection form)
         {
             ViewBag.Code = form["code"] ?? "none";
-
-
-            var state = form["state"];
-            var tempState = await GetTempStateAsync();
-
-            if (tempState != null && state.Equals(tempState.Item1, StringComparison.Ordinal))
-            {
-                ViewBag.State = state + " (valid)";
-            }
-            else
-            {
-                ViewBag.State = state + " (invalid)";
-            }
+            //            var state = form["state"];
 
             ViewBag.Error = Request.QueryString["error"] ?? "none";
+            var response = await GetTokenFromAuthServer(ViewBag.Code);
 
-            var response = await GetTokenFromAuthServer();
-
-            return View("Token", response);
-
-            //            return View();
+            return View("Tokens", response);
         }
+
+
+        private async Task<TokenResponse> ExchangeCodeForTokens(string strCode)
+        {
+            TokenResponse response = null;
+            if (!string.IsNullOrWhiteSpace(strCode))
+            {
+                HttpCookie oAuthRedirectParamsCookie = Response.Cookies[OKTA_OAUTH_REDIRECT_PARAMS_COOKIE];
+
+                if (oAuthRedirectParamsCookie != null && !string.IsNullOrEmpty(oAuthRedirectParamsCookie.Value))
+                {
+                    JObject jsonValue = JObject.Parse(oAuthRedirectParamsCookie.Value);
+                    //grab the state and nonce from the cookie
+                }
+
+                response = await GetTokenFromAuthServer(strCode);
+            }
+            return response;
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> ProcessCode(string code, string state, string idToken)
+        {
+            TokenResponse response = await ExchangeCodeForTokens(code);
+            return Json(code, JsonRequestBehavior.AllowGet);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult> GetToken()
         {
-
-            var response = await GetTokenFromAuthServer();
+            var response = await GetTokenFromAuthServer(Request.Form["code"]);
 
             return View("Token", response);
         }
@@ -71,7 +105,7 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
         [Authorize]
         public ActionResult Tokens()
         {
-            ViewBag.Message = "View Tokens";
+            ViewBag.Message = "ID and Access Tokens";
 
             if (HttpContext.GetOwinContext() != null && HttpContext.GetOwinContext().Authentication.User != null)
             {
@@ -93,7 +127,7 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
             return View();
         }
 
-        private async Task<TokenResponse> GetTokenFromAuthServer()
+        private async Task<TokenResponse> GetTokenFromAuthServer(string strAuthorizationCode)
         {
             string oidcClientId = ConfigurationManager.AppSettings["okta:OAuthClientId"];
             string oidcClientSecret = ConfigurationManager.AppSettings["okta:OAuthClientSecret"];
@@ -104,11 +138,11 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
                 oktaTenantUrl + Constants.TokenEndpoint,
                 oidcClientId,
                 oidcClientSecret,
-                AuthenticationStyle.PostValues);
+                AuthenticationStyle.BasicAuthentication);
 
-            var code = Request.Form["code"];
-            var tempState = await GetTempStateAsync();
-            Request.GetOwinContext().Authentication.SignOut("TempState");
+            var code = strAuthorizationCode;
+            //var tempState = await GetTempStateAsync();
+            //Request.GetOwinContext().Authentication.SignOut("TempState");
 
             var response = await client.RequestAuthorizationCodeAsync(
                 code,
@@ -124,7 +158,12 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
             {
                 ViewBag.AccessTokenParsed = ParseJwt(response.AccessToken);
             }
-
+            if (!string.IsNullOrEmpty(response.RefreshToken))
+            {
+                ViewBag.RefreshToken = response.RefreshToken;
+            }
+            string s = "qwe qwe";
+            s.Split(' ');
             return response;
         }
 
@@ -181,19 +220,19 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
             return jwt.ToString();
         }
 
-        private async Task<Tuple<string, string>> GetTempStateAsync()
-        {
-            var data = await Request.GetOwinContext().Authentication.AuthenticateAsync("TempState");
+        //private async Task<Tuple<string, string>> GetTempStateAsync()
+        //{
+        //    var data = await Request.GetOwinContext().Authentication.AuthenticateAsync("TempState");
 
-            if (data != null && data.Identity != null && data.Identity.FindFirst("state") != null)
-            {
-                var state = data.Identity.FindFirst("state").Value;
-                var nonce = data.Identity.FindFirst("nonce").Value;
+        //    if (data != null && data.Identity != null && data.Identity.FindFirst("state") != null)
+        //    {
+        //        var state = data.Identity.FindFirst("state").Value;
+        //        var nonce = data.Identity.FindFirst("nonce").Value;
 
-                return Tuple.Create(state, nonce);
+        //        return Tuple.Create(state, nonce);
 
-            }
-            return null;
-        }
+        //    }
+        //    return null;
+        //}
     }
 }

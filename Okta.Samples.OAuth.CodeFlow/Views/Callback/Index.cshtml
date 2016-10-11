@@ -3,6 +3,77 @@
     ViewBag.Title = "Index";
 }
 
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+
+    function ProcessCode(code, state, idToken) {
+        $.ajax({
+            url: '/Callback/ProcessCode',
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            data: { 'code': code, 'state': state, 'idToken': idToken },
+            success: function (results) {
+                //alert(results)
+            },
+            error: function () {
+                alert('An error occurred');
+            }
+        });
+    }
+
+    function hashToObject(hash) {
+        // Predefine regexs for parsing hash
+        var plus2space = /\+/g;
+        var paramSplit = /([^&=]+)=?([^&]*)/g;
+
+        // Remove the leading hash
+        var fragment = hash.substring(1);
+
+        var obj = {};
+
+        // Loop until we have no more params
+        var param;
+        while (true) { // eslint-disable-line no-constant-condition
+            param = paramSplit.exec(fragment);
+            if (!param) { break; }
+
+            var key = param[1];
+            var value = param[2];
+
+            // id_token should remain base64url encoded
+            if (key === 'id_token' || key === 'access_token' || key === 'code') {
+                obj[key] = value;
+            } else {
+                obj[key] = decodeURIComponent(value.replace(plus2space, ' '));
+            }
+        }
+        return obj;
+    }
+
+
+    console.log("processing fragment");
+    var hash = window.location.hash;
+    console.log("hash " + hash);
+    var objParams = hashToObject(hash);
+    console.log("code: " + objParams['code']);
+    var code = objParams['code'];
+    console.log("state: " + objParams['state']);
+    var state = objParams['state'];
+    console.log("ID Token: " + objParams['id_token']);
+    var idToken = objParams['id_token'];
+    ProcessCode(code, state, idToken);
+
+
+    //}).done(function () {
+    //    alert('Added');
+    //});
+    //}
+
+</script>
+
 <h2>Callback</h2>
 
 Code: <strong>@ViewBag.Code</strong>
@@ -19,7 +90,7 @@ Error: <strong>@ViewBag.Error</strong>
     using (Html.BeginForm("GetToken"))
     {
         <input type="hidden" name="code" value="@ViewBag.Code" />
-        <input type="submit" value="Get token"  />
+        <input type="submit" value="Get token" />
     }
 }
 
