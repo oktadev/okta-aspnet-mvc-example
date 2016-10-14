@@ -1,0 +1,112 @@
+﻿@*
+    * Copyright (c) 2016, Okta, Inc. and/or its affiliates. All rights reserved.
+    * The Okta software accompanied by this notice is provided pursuant to the Apache License, Version 2.0 (the "License.")
+    *
+    * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
+    * Unless required by applicable law or agreed to in writing, software
+    * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+    * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    *
+    * See the License for the specific language governing permissions and limitations under the License.
+*@
+
+@{
+    ViewBag.Title = "SignInWidget";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>SignInWidget</h2>
+
+<script src="/npm/js/okta-sign-in.min.js" type="text/javascript"></script>
+<link href="/npm/css/okta-sign-in.min.css" type="text/css" rel="stylesheet">
+<link href="/npm/css/okta-theme.css" type="text/css" rel="stylesheet">
+
+
+<style>
+    #okta-sign-in {
+        margin-top: 0px;
+    }
+</style>
+<div style="height:100px"></div>
+
+<div class="signin">
+    <p class="sign_title" style="text-align:center">Log in with your Acme Partner account</p>
+    <div id="okta-sign-in-widget" style="margin-top: 0px"></div>
+
+    <div id="logged-in-user-id" style="display: none;">
+        <p>Logged in as User ID: <span id="okta-user-id"></span></p>
+    </div>
+    @*<div class="or">
+            <div class="or_l"></div>
+            <span>or</span>
+            <div class="or_r"></div>
+        </div>*@
+
+    <div id="apicall-buttons" style="padding-top:20px">
+        <h1><span id="logged-in-res"></span></h1>
+        <br />
+        <button id="btnUnsecureWebApi" class="btn btn-lg btn-primary" onclick="callUnsecureWebApi()">Unsecure API</button>
+        <button id="btnSecureWebApi" class="btn btn-lg btn-primary" onclick="callSecureWebApi()">Secure API</button>
+        <button id="btnSignOut" class="btn btn-lg btn-primary" onclick="signOut()">Sign Out</button>
+        @*<button class="btn btn-lg btn-primary" onclick="callUserInfo()">User Info</button>*@
+        <button id="btnSessionsMe" class="btn btn-lg btn-primary" onclick="callSessionsMe()">My Session</button>
+        <button id="btnCallUsersMe" class="btn btn-lg btn-primary" onclick="callUsersMe()">Me</button>
+        <button id="btnRenewIDToken" class="btn btn-lg btn-primary" onclick="callRenewToken()">Renew Token</button>
+    </div>
+    @*<div class="social_sign">
+            <h3>Sign in with your social account</h3>
+            <a class="fb" href="#facebook"><i class="fa fa-facebook"></i></a> <a class="tw" href="#twitter"><i class="fa fa-twitter"></i></a> <a class="gp" href="#googleplus"><i class="fa fa-google-plus"></i></a>
+        </div>*@
+</div>
+<script type="text/javascript">
+    var oktaOrgUrl = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthAuthority"]';
+    var oauthClientId = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthClientId"]';
+    var oauthRedirectUri = '@System.Web.Configuration.WebConfigurationManager.AppSettings["okta:OAuthRedirectUri"]';
+    var webApiRootUrl = '@System.Web.Configuration.WebConfigurationManager.AppSettings["WebApiUrl"]';
+</script>
+<script src="~/Scripts/osw-custom.js">
+</script>
+<script type="text/javascript">
+    function setupOktaSignIn(baseUrl, clientId) {
+        return new OktaSignIn({
+            baseUrl: oktaOrgUrl,
+//            language: 'fr',
+            clientId: oauthClientId,
+            redirectUri: oauthRedirectUri,
+            authParams: {
+                responseType: 'code',
+                display: 'page',
+                scope: ['openid', 'profile', 'email', 'address', 'phone', 'groups'],
+            },
+            features: {
+                rememberMe: true,
+                smsRecovery: true,
+                selfServiceUnlock: true
+
+            },
+            helpLinks: {
+                help: 'http://acme.com/custom/help/page',
+                custom: [
+                    { text: 'custom link text 1', href: 'http://acme.com/custom/link1' },
+                 { text: 'custom link text 2', href: 'http://acme.com/custom/link2' }
+                ]
+            },
+            labels: {
+                'primaryauth.title': 'Acme Partners Sign In',
+                'primaryauth.submit': 'Partner Sign In',
+                'primaryauth.username.placeholder': 'Partner ID',
+                'primaryauth.username.tooltip': 'Enter your partner.com ID',
+                'primaryauth.password.placeholder': 'Password',
+                'primaryauth.password.tooltip': 'Super secret password'
+            }
+        });
+    };
+
+    var oktaSignIn = setupOktaSignIn(oktaOrgUrl, oauthClientId);
+
+    $(document).ready(function () {
+        // defined in 'Scripts/ows-custom.js'
+        renderOktaWidget();
+    });
+</script>
+
