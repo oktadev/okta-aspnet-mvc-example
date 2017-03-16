@@ -11,14 +11,10 @@
  */
 
 using Microsoft.Owin;
-using Microsoft.Owin.Security.Jwt;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
-using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
-using System.Linq;
-using System.Web;
 using System.Web.Configuration;
 using System.Web.Http;
 
@@ -41,23 +37,29 @@ namespace Api
             //WebApiConfig.Register(config);
 
             var clientID = WebConfigurationManager.AppSettings["okta:ClientId"];
-            var issuer = WebConfigurationManager.AppSettings["okta:TenantUrl"];
-            var authorizationServerIssuer = WebConfigurationManager.AppSettings["okta:ASIssuer"];
+            var tenantUrl = WebConfigurationManager.AppSettings["okta:TenantUrl"];
 
-            TokenValidationParameters tvps = new TokenValidationParameters
+            var tvps = new TokenValidationParameters
             {
-                ValidAudience = clientID,
+                ValidAudience = tenantUrl,
                 ValidateAudience = true,
+                ValidIssuer = tenantUrl,
                 ValidateIssuer = true,
-                ValidIssuer = authorizationServerIssuer
             };
+
+            var additionalTokenValidationParamters = new Dictionary<string, string>()
+            {
+                // Validate Client ID claim
+                ["cid"] = clientID
+            };
+
+            var securityTokenProvider = new OpenIdConnectCachingSecurityTokenProvider(tenantUrl + "/.well-known/openid-configuration");
+            var jwtFormat = new CustomValidatingJwtFormat(tvps, additionalTokenValidationParamters, securityTokenProvider);
 
             app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions
             {
-                AccessTokenFormat = new JwtFormat(tvps,
-                new OpenIdConnectCachingSecurityTokenProvider(issuer + "/.well-known/openid-configuration"))
+                AccessTokenFormat = jwtFormat
             });
-
         }
     }
 }
