@@ -18,7 +18,7 @@ using System.Configuration;
 using IdentityModel.Client;
 using System;
 using System.Security.Claims;
-
+using System.Linq;
 
 namespace Okta.Samples.OAuth.CodeFlow
 {
@@ -26,17 +26,6 @@ namespace Okta.Samples.OAuth.CodeFlow
     {
         public void ConfigureAuth(IAppBuilder app)
         {
-            //app.UseErrorPage(new ErrorPageOptions
-            //{
-            //    ShowCookies = true,
-            //    ShowEnvironment = true,
-            //    ShowQuery = true,
-            //    ShowExceptionDetails = true,
-            //    ShowHeaders = true,
-            //    ShowSourceCode = true,
-            //    SourceCodeLineCount = 10
-            //});
-
             string oktaOAuthClientId = ConfigurationManager.AppSettings["okta:OauthClientId"] as string;
             string oidcClientSecret = ConfigurationManager.AppSettings["okta:OAuthClientSecret"];
             string oidcAuthority = ConfigurationManager.AppSettings["okta:OAuthAuthority"] as string;
@@ -72,7 +61,6 @@ namespace Okta.Samples.OAuth.CodeFlow
 
                         var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(n.Code, n.RedirectUri);
 
-
                         if (tokenResponse.IsError)
                         {
                             throw new Exception(tokenResponse.Error);
@@ -86,7 +74,8 @@ namespace Okta.Samples.OAuth.CodeFlow
                         //// create new identity
                         var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
                         //adding the claims we get from the userinfo endpoint
-                        id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
+                        var idClaims = userInfoResponse.GetClaimsIdentity();
+                        id.AddClaims(idClaims.Claims);
 
                         //also adding the ID, Access and Refresh tokens to the user claims 
                         id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
@@ -100,36 +89,15 @@ namespace Okta.Samples.OAuth.CodeFlow
                             id.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
                         }
 
+                        // Make sure the Name claim is populated (for Identity.Name)
+                        var nameClaim = new Claim(ClaimTypes.Name, idClaims.Claims.FirstOrDefault(c => c.Type == "name")?.Value);
+                        id.AddClaim(nameClaim);
+
                         n.AuthenticationTicket = new AuthenticationTicket(new ClaimsIdentity(id.Claims, n.AuthenticationTicket.Identity.AuthenticationType),
                             n.AuthenticationTicket.Properties);
                     },
-
-
-                    // Okta OIDC logout endpoint is not yet implemented, so commented out below
-
-
-                //    RedirectToIdentityProvider = n =>
-                //    {
-                //        // if signing out, add the id_token_hint
-                //        if (n.ProtocolMessage.RequestType == OpenIdConnectRequestType.LogoutRequest)
-                //        {
-                //            var idTokenHint = n.OwinContext.Authentication.User.FindFirst("id_token");
-
-                //            if (idTokenHint != null)
-                //            {
-                //                n.ProtocolMessage.IdTokenHint = idTokenHint.Value;
-                //            }
-
-                //        }
-
-                //        return Task.FromResult(0);
-                //    }
                 }
-
             });
-
-
-
         }
     }
 }

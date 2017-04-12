@@ -26,15 +26,8 @@ namespace Api
     {
         public void Configuration(IAppBuilder app)
         {
-
-          //  web api configuration
-           var config = new HttpConfiguration();
-            //config.MapHttpAttributeRoutes();
+            var config = new HttpConfiguration();
             config.EnableSystemDiagnosticsTracing();
-
-            //app.UseWebApi(config);
-
-            //WebApiConfig.Register(config);
 
             var clientID = WebConfigurationManager.AppSettings["okta:ClientId"];
             var tenantUrl = WebConfigurationManager.AppSettings["okta:TenantUrl"];
