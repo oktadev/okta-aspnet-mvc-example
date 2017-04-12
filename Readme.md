@@ -1,22 +1,41 @@
-# Okta ASP.NET MVC OAuth Authorization Code Flow Sample
-This is a a code sample demonstrating the use of OpenID Connect with Okta and the Microsoft.Owin.Security.OpenIdConnect (for the client application) and the Microsoft.Owin.Security.OAuth (for the resource server Api) OWIN libraries.
+# ASP.NET MVC + Okta Authorization Code Flow Sample
+This is a a code sample demonstrating the use of OpenID Connect with Okta and the Microsoft.Owin.Security.OpenIdConnect (for the client application) and the Microsoft.Owin.Security.OAuth (for the resource server API) OWIN libraries.
 
-### Setup
-1. Open the __*Okta.Samples.OAuth.CodeFlow.sln*__ solution in Visual Studio 2015 and restore all NuGet packages
-2. In the  __*Okta.Samples.OAuth.CodeFlow*__ project, edit the Web.config file and make the modifications to the following parameters:
- + __okta:OAuthClientId__: the Client ID value from the _General => Client Credentials_ section of your OAuth client application in Okta.
- + __okta:OauthClientSecret__: the Client Secret value from the _General => Client Credentials_ section of your OAuth client application in Okta.
- + __okta:OAuthAuthority__: This should be the Url of your Okta organization (such as _https://example.oktapreview.com"_)
- + __okta:OAuthRedirectUri__: This should be the redirect url Okta will post the authorization response to. You don't have to change that value if you are running this sample in Visual Studio with its default parameters.
-__Important note__: You must register this url as a _Redirect URI_ in the _General => General Settings_ section of your Okta application.
- + __okta:OAuthScopes__: This is the list of OAuth scopes you are requesting for your user. If you have access to Okta's _API Access Management_ feature, you can include any custom scope you may have created in the _Authorization Server => OAuth 2.0 Access Token_ section of your Okta application.
-__Note__: For the _offline_access_ scope to work, you must check the _Refresh Token_ checkbox in the _General => General Settings +> Allowed grant types_ section of your Okta application.
- + __okta:OAuthResponseType__: This is the response type you are requesting. You can choose either the Authorization Code flow (_code_ value) or the Hybrid flow value (_code id_token_). Note that the Microsoft.Owin.Security.OpenIdConnect OWIN library only officially supports the Hybrid flow.
- + __okta:ApiEndpoint__: This is the url of the Resource Server Api endpoint you will when clicking on the _Call API_ link in your application. You shouldn't have to modify this value if you are using the default values of the Api project in Visual Studio.
-3. In the __*Api*__ project, open the Web.config file and make the following modifications:
- + __okta:TenantUrl__: the Url of your Okta organization (such as _https://example.oktapreview.com"_)
- + __okta:ClientId__: the Client ID value from the _General => Client Credentials_ section of your OAuth client application in Okta.
-3. Compile and run the Okta.Samples.OAuth.CodeFlow project. It should open the sample web application at https://localhost:44327
-5. Click on "Sign in with OpenID Connect" and sign in with your test user Okta credentials.
-6. When you're back to the application, you may click on the "My Claims" link to view the claims retrieved from the `/oauth2/v1/userinfo` endpoint 
-7. You may also use "Call API" to call your backend API.
+To get this sample running, follow these instructions:
+
+### Okta setup
+
+0. If you haven't already, sign up for an [Okta developer account](https://www.okta.com/developer/signup). Once you sign in, click on the Admin button in the top-right corner of the dashboard.
+0. Create a new application (Applications - Add Application - Create New App - Web/OpenID Connect). Type a name for the application and click Next.
+0. Click Add URI and copy the Redirect URI from the `okta:OAuthRedirectUri` property in the CodeFlow project's Web.config file (the default is `https://localhost:44327/Callback`).
+0. Click Finish to create the Okta application.
+0. Switch to the People tab and assign at least one user to the application (you'll log in with this user later).
+0. Switch to the General tab. Click Edit next to General Settings, and enable the Implicit (Hybrid) checkbox. This will allow you to get an ID Token in addition to an Access Token.
+
+
+### Application setup
+1. Open the solution in Visual Studio 2015 (or later).
+2. In the Web.config file for the CodeFlow project, edit these values:
+
+| Property | Change to: |
+| -------- | ----------- |
+| **okta:OAuthClientId** | The client ID from the Client Credentials section of your Okta application |
+| **okta:OauthClientSecret** | The client secret from the Client Credentials section of your Okta application |
+| **okta:OAuthAuthority** | The URL of your Okta organization (such as `https://dev-12345.oktapreview.com`) |
+
+> :bulb: The org URL should have the format `dev-*.oktapreview.com`. Make sure you don't copy the `dev-*-admin` URL!
+
+3. Next, open the Web.config file for the Api project and edit these values:
+
+| Property | Change to: |
+| -------- | ----------- |
+| **okta:ClientId** | The client ID from the Client Credentials section of your Okta application |
+| **okta:TenantUrl** | The URL of your Okta organization (such as `https://dev-12345.oktapreview.com`) |
+
+
+4. Right-click on the CodeFlow project and select **Set as startup project**.
+0. Choose Rebuild All to build the solution and restore any missing packages.
+0. Run the solution. It should open the sample web application at https://localhost:44327. The Api project (a sample resource server) will also start up at https://localhost:44316.
+0. Click on **Sign in with OpenID Connect** and sign in with your test user Okta credentials.
+0. When you're back to the application, click on the **My Claims** link to view the claims retrieved from the `/oauth2/v1/userinfo` endpoint.
+0. Click the **Call API** link to call your resource server using the user's access token.

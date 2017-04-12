@@ -21,16 +21,17 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    @*@if (!User.Identity.IsAuthenticated)
-                    {*@
-                    <li>@Html.ActionLink("Sign In with OpenID Connect", "Tokens", "Callback")</li>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Sign In with OpenID Connect", "Tokens", "Callback")</li>
                     }
                     else
                     {
-                    <li>@Html.ActionLink("My Claims", "Index", "App")</li>
-                    <li>@Html.ActionLink("Call API", "GetProtectedResource", "CallApi")</li>
-                    <li>@Html.ActionLink("Sign Out", "SignOut", "Home")</li>
-                    @*}*@
+                        <p class="navbar-text">Signed in as @User.Identity.Name</p>
+                        <li>@Html.ActionLink("My Claims", "Index", "App")</li>
+                        <li>@Html.ActionLink("Call API", "GetProtectedResource", "CallApi")</li>
+                        <li>@Html.ActionLink("Sign Out", "SignOut", "Home")</li>
+                    }
 
                 </ul>
             </div>

@@ -56,8 +56,6 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
             var response = await GetTokenFromAuthServer();
 
             return View("Token", response);
-
-            //            return View();
         }
 
         [HttpPost]
