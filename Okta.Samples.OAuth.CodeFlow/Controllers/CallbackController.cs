@@ -158,12 +158,12 @@ namespace Okta.Samples.OAuth.CodeFlow.Controllers
         {
             string oktaTenantUrl = ConfigurationManager.AppSettings["okta:OAuthAuthority"];
 
-            var userInfoClient = new UserInfoClient(new Uri(oktaTenantUrl + Constants.UserInfoEndpoint), accessToken);
+            var userInfoClient = new UserInfoClient(oktaTenantUrl + Constants.UserInfoEndpoint);
 
-            var userInfo = await userInfoClient.GetAsync();
+            var userInfo = await userInfoClient.GetAsync(accessToken);
 
             var claims = new List<Claim>();
-            userInfo.Claims.ToList().ForEach(ui => claims.Add(new Claim(ui.Item1, ui.Item2)));
+            userInfo.Claims.ToList().ForEach(ui => claims.Add(new Claim(ui.Type, ui.Value)));
 
             return claims;
         }
