@@ -79,14 +79,14 @@ namespace Okta.Samples.OAuth.CodeFlow
                         }
 
                         // use the access token to retrieve claims from userinfo
-                        var userInfoClient = new UserInfoClient(new Uri(oidcAuthority + Constants.UserInfoEndpoint), tokenResponse.AccessToken);
+                        var userInfoClient = new UserInfoClient(oidcAuthority + Constants.UserInfoEndpoint);
 
-                        var userInfoResponse = await userInfoClient.GetAsync();
+                        var userInfoResponse = await userInfoClient.GetAsync(tokenResponse.AccessToken);
 
                         //// create new identity
                         var id = new ClaimsIdentity(n.AuthenticationTicket.Identity.AuthenticationType);
                         //adding the claims we get from the userinfo endpoint
-                        id.AddClaims(userInfoResponse.GetClaimsIdentity().Claims);
+                        id.AddClaims(userInfoResponse.Claims);
 
                         //also adding the ID, Access and Refresh tokens to the user claims 
                         id.AddClaim(new Claim("id_token", n.ProtocolMessage.IdToken));
