@@ -30,6 +30,7 @@
                         <li>
                             <p class="navbar-text">Hello, <b>@Context.User.Identity.Name</b></p>
                         </li>
+                        <li>@Html.ActionLink("View claims", "Claims", "Account")</li>
                         <li>
                             <a onclick="document.getElementById('logout_form').submit();" style="cursor: pointer;">Log out</a>
                         </li>
@@ -39,7 +40,7 @@
                 else
                 {
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/Account/Login">Log in</a></li>
+                        <li>@Html.ActionLink("Log in", "Login", "Account")</li>
                     </ul>
                 }
             </div>

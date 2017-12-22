@@ -36,5 +36,11 @@ namespace OktaAspNetExample.Controllers
         {
             return RedirectToAction("Index", "Home");
         }
+
+        [Authorize]
+        public ActionResult Claims()
+        {
+            return View(HttpContext.GetOwinContext().Authentication.User.Claims);
+        }
     }
 }
