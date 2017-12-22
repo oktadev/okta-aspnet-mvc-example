@@ -43,19 +43,17 @@ http://localhost:59896/authorization-code/callback
 
 Click **Done**. On the General Settings screen, click **Edit**.
 
-Check **Implicit (Hybrid)** and **Allow ID Token**.
-
-Add a **Logout redirect URI**:
+Check **Implicit (Hybrid)** and **Allow ID Token**. Add a **Logout redirect URI**:
 
 ```
 http://localhost:59896/Account/PostLogout
 ```
 
-**Note**: You can run the project in Visual Studio to see the port it is assigned on your machine. It may be different than `59896`. In that case, you'll need to update the URIs in Okta.
+**Note**: You can run the project in Visual Studio to see the port it is assigned on your machine. It may be different than 59896. In that case, you'll need to update the URIs in Okta.
 
 Scroll to the bottom of the page and find the Client ID and Client Secret. You'll need those values in the next step.
 
-#### Project configuration
+### Project configuration
 
 Open the `Web.config` file and update these values:
 
@@ -67,14 +65,12 @@ Open the `Web.config` file and update these values:
 
 ### Start the application
 
-Use Visual Studio to run the project. It should start up on `http://localhost:59896`. (If it doesn't, update the URLs in Okta and in `Web.config`).
+Use Visual Studio to run the project. It should start up on `http://localhost:59896`. (If it doesn't, update the URLs in Okta and in `Web.config`)
 
 ## Links
 
-This example uses the following libraries provided by Okta:
-
 * [ASP.NET + Okta authentication quickstart](https://developer.okta.com/quickstart/#/okta-sign-in-page/dotnet/aspnet4)
-* Use the [Okta .NET SDK](https://github.com/okta/okta-sdk-dotnet) if you need to call other Okta APIs for management tasks
+* Use the [Okta .NET SDK](https://github.com/okta/okta-sdk-dotnet) if you need to call [Okta APIs](https://developer.okta.com/docs/api/resources/users) for management tasks
 
 ## Help
 
