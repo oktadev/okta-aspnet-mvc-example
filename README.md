@@ -1,6 +1,6 @@
-# ASP.NET 4.x + Okta
+# ASP.NET MVC + Okta
 
-This example shows how to use Okta, OpenID Connect, and ASP.NET 4.x+ MVC.
+This example shows how to use Okta, OpenID Connect, and ASP.NET MVC 4.x+.
 
 You can follow an **[interactive quickstart](https://developer.okta.com/quickstart/#/okta-sign-in-page/dotnet/aspnet4)** for this project to see how it was created.
 
