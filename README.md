@@ -1,6 +1,6 @@
 # ASP.NET 4.x + Okta
 
-This example shows how to use Okta, OpenID Connect, and ASP.NET 4.x+.
+This example shows how to use Okta, OpenID Connect, and ASP.NET 4.x+ MVC.
 
 You can follow an **[interactive quickstart](https://developer.okta.com/quickstart/#/okta-sign-in-page/dotnet/aspnet4)** for this project to see how it was created.
 
@@ -18,7 +18,7 @@ You can follow an **[interactive quickstart](https://developer.okta.com/quicksta
 To install this example application, clone this repository with Git:
 
 ```bash
-git clone git@github.com:oktadeveloper/okta-aspnet-example.git
+git clone git@github.com:oktadeveloper/okta-aspnet-mvc-example.git
 ```
 
 Or download a zip archive of the repository from GitHub and extract it on your machine.
