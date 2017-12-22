@@ -22,3 +22,13 @@ select,
 textarea {
     max-width: 280px;
 }
+
+dt {
+    padding-bottom: 10px;
+    color: darkgrey;
+}
+
+dd {
+    padding-bottom: 10px;
+    overflow-wrap: break-word;
+}
