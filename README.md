@@ -2,7 +2,7 @@
 
 This example shows how to use Okta, OpenID Connect, and ASP.NET MVC 4.x+.
 
-You can follow an **[interactive quickstart](https://developer.okta.com/quickstart/#/okta-sign-in-page/dotnet/aspnet4)** for this project to see how it was created.
+You can follow the **[ quickstart](https://developer.okta.com/quickstart/#/okta-sign-in-page/dotnet/aspnet4)** for this project to see how it was created.
 
 **Prerequisites:** [Visual Studio](https://www.visualstudio.com/downloads/) and Windows.
 
@@ -51,15 +51,15 @@ http://localhost:59896/Account/PostLogout
 
 **Note**: You can run the project in Visual Studio to see the port it is assigned on your machine. It may be different than 59896. In that case, you'll need to update the URIs in Okta.
 
-Scroll to the bottom of the page and find the Client ID and Client Secret. You'll need those values in the next step.
+Scroll to the bottom of the Okta application page to find the client ID and client secret. You'll need those values in the next step.
 
 ### Project configuration
 
 Open the `Web.config` file and update these values:
 
-* `okta:ClientId` - The Client ID of the Okta application
-* `okta:ClientSecret` - The Client Secret of the Okta application
-* `okta:Issuer` - Replace `{yourOktaDomain}` with your Okta domain, found on the Dashboard page or in the address bar.
+* `okta:ClientId` - The client ID of the Okta application
+* `okta:ClientSecret` - The client secret of the Okta application
+* `okta:Issuer` - Replace `{yourOktaDomain}` with your Okta domain, found at the top-right of the Dashboard page, or in the address bar.
 
 **Note:** The value of `{yourOktaDomain}` should be something like `dev-123456.oktapreview.com`. Make sure you don't include `-admin` in the value!
 
