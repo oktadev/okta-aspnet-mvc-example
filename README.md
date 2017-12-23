@@ -25,7 +25,7 @@ Or download a zip archive of the repository from GitHub and extract it on your m
 
 ### Create an application in Okta
 
-You will need to create an OpenID Connect application in Okta to to perform authentication. 
+You will need to create an application in Okta to to perform authentication. 
 
 Log in to your Okta Developer account (or [sign up](https://developer.okta.com/signup/) if you don’t have an account) and navigate to **Applications** > **Add Application**. Click **Web**, click **Next**, and give the app a name you’ll remember.
 
