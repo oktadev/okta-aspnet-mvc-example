@@ -3,6 +3,7 @@ using System.Configuration;
 using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.IdentityModel.Protocols;
@@ -38,6 +39,9 @@ namespace OktaAspNetExample
             var clientSecret = ConfigurationManager.AppSettings["okta:ClientSecret"].ToString();
             var issuer = ConfigurationManager.AppSettings["okta:Issuer"].ToString();
             var redirectUri = ConfigurationManager.AppSettings["okta:RedirectUri"].ToString();
+            var apiAccessManagement =
+                bool.Parse(ConfigurationManager.AppSettings["okta:ApiAccessManagement"].ToString());
+            var authorizationServerId = ConfigurationManager.AppSettings["okta:AuthorizationServerId"].ToString();
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
@@ -67,9 +71,16 @@ namespace OktaAspNetExample
                     },
                     AuthorizationCodeReceived = async context =>
                     {
+                        var baseUrlBuilder = new StringBuilder(issuer);
+                        baseUrlBuilder.Append("/oauth2");
+
+                        if (apiAccessManagement)
+                        {
+                            baseUrlBuilder.Append($"/{authorizationServerId}");
+                        }
+                        
                         // Exchange code for access and ID tokens
-                        var tokenClient = new TokenClient(
-                            issuer + "/v1/token", clientId, clientSecret);
+                        var tokenClient = new TokenClient($"{baseUrlBuilder}/v1/token", clientId, clientSecret);
                         var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(context.ProtocolMessage.Code, redirectUri);
 
                         if (tokenResponse.IsError)
@@ -77,7 +88,7 @@ namespace OktaAspNetExample
                             throw new Exception(tokenResponse.Error);
                         }
                         
-                        var userInfoClient = new UserInfoClient(issuer + "/v1/userinfo");
+                        var userInfoClient = new UserInfoClient($"{baseUrlBuilder}/v1/userinfo");
                         var userInfoResponse = await userInfoClient.GetAsync(tokenResponse.AccessToken);
 
                         var identity = new ClaimsIdentity();
