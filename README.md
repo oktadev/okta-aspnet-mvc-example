@@ -60,6 +60,8 @@ Open the `Web.config` file and update these values:
 * `okta:ClientId` - The client ID of the Okta application
 * `okta:ClientSecret` - The client secret of the Okta application
 * `okta:Issuer` - Replace `{yourOktaDomain}` with your Okta domain, found at the top-right of the Dashboard page, or in the address bar.
+* `okta:ApiAccessManagement` - Replace with `true` if you have the feature activated on your org.
+* `okta:AuthorizationServerId` - If the above is `true` and you use a different server than the default one, replace this value with the ID of the server.
 
 **Note:** The value of `{yourOktaDomain}` should be something like `dev-123456.oktapreview.com`. Make sure you don't include `-admin` in the value!
 
