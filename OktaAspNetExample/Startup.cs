@@ -42,12 +42,22 @@ namespace OktaAspNetExample
             var apiAccessManagement =
                 bool.Parse(ConfigurationManager.AppSettings["okta:ApiAccessManagement"].ToString());
             var authorizationServerId = ConfigurationManager.AppSettings["okta:AuthorizationServerId"].ToString();
+            
+            var baseUrlBuilder = new StringBuilder(issuer);
+            baseUrlBuilder.Append("/oauth2");
+
+            if (apiAccessManagement)
+            {
+                baseUrlBuilder.Append($"/{authorizationServerId}");
+            }
+
+            var baseUrl = baseUrlBuilder.ToString();
 
             app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
             {
                 ClientId = clientId,
                 ClientSecret = clientSecret,
-                Authority = issuer,
+                Authority = apiAccessManagement ? baseUrl : issuer,
                 RedirectUri = redirectUri,
                 ResponseType = "code id_token",
                 UseTokenLifetime = false,
@@ -71,14 +81,6 @@ namespace OktaAspNetExample
                     },
                     AuthorizationCodeReceived = async context =>
                     {
-                        var baseUrlBuilder = new StringBuilder(issuer);
-                        baseUrlBuilder.Append("/oauth2");
-
-                        if (apiAccessManagement)
-                        {
-                            baseUrlBuilder.Append($"/{authorizationServerId}");
-                        }
-                        
                         // Exchange code for access and ID tokens
                         var tokenClient = new TokenClient($"{baseUrlBuilder}/v1/token", clientId, clientSecret);
                         var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(context.ProtocolMessage.Code, redirectUri);
