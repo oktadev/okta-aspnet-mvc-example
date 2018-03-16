@@ -1,16 +1,12 @@
-﻿using System;
-using System.Configuration;
-using System.IdentityModel.Tokens;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using IdentityModel.Client;
-using Microsoft.IdentityModel.Protocols;
-using Microsoft.Owin;
+﻿using Microsoft.Owin;
+using Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OpenIdConnect;
-using Owin;
+using System.Threading.Tasks;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using System.Configuration;
+using System.Security.Claims;
 
 [assembly: OwinStartup(typeof(OktaAspNetExample.Startup))]
 
@@ -18,88 +14,64 @@ namespace OktaAspNetExample
 {
     public class Startup
     {
+        string clientId = ConfigurationManager.AppSettings["okta:ClientId"];
+        string redirectUri = ConfigurationManager.AppSettings["okta:RedirectUri"];
+        string authority = ConfigurationManager.AppSettings["okta:Issuer"];
+        string clientSecret = ConfigurationManager.AppSettings["okta:ClientSecret"];
+        string postLogoutRedirectUri = ConfigurationManager.AppSettings["okta:PostLogoutRedirectUri"];
+
+        /// <summary>
+        /// Configure OWIN to use OpenIdConnect 
+        /// </summary>
+        /// <param name="app"></param>
         public void Configuration(IAppBuilder app)
         {
-            // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=316888
-
-            ConfigureAuth(app);
-        }
-
-        private void ConfigureAuth(IAppBuilder app)
-        {
             app.SetDefaultSignInAsAuthenticationType(CookieAuthenticationDefaults.AuthenticationType);
-
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
-            });
-
-            var clientId = ConfigurationManager.AppSettings["okta:ClientId"].ToString();
-            var clientSecret = ConfigurationManager.AppSettings["okta:ClientSecret"].ToString();
-            var issuer = ConfigurationManager.AppSettings["okta:Issuer"].ToString();
-            var redirectUri = ConfigurationManager.AppSettings["okta:RedirectUri"].ToString();
-
-            app.UseOpenIdConnectAuthentication(new OpenIdConnectAuthenticationOptions
-            {
-                ClientId = clientId,
-                ClientSecret = clientSecret,
-                Authority = issuer,
-                RedirectUri = redirectUri,
-                ResponseType = "code id_token",
-                UseTokenLifetime = false,
-                Scope = "openid profile",
-                PostLogoutRedirectUri = ConfigurationManager.AppSettings["okta:PostLogoutRedirectUri"].ToString(),
-                TokenValidationParameters = new TokenValidationParameters
+            app.UseCookieAuthentication(new CookieAuthenticationOptions());
+            app.UseOpenIdConnectAuthentication(
+                new OpenIdConnectAuthenticationOptions
                 {
-                    NameClaimType = "name"
-                },
-                Notifications = new OpenIdConnectAuthenticationNotifications
-                {
-                    RedirectToIdentityProvider = context =>
+                    ClientId = clientId,
+                    ClientSecret = clientSecret,
+                    Authority = authority,
+                    RedirectUri = redirectUri,
+                    ResponseType = OpenIdConnectResponseType.CodeIdToken,
+                    Scope = OpenIdConnectScope.OpenIdProfile,
+                    PostLogoutRedirectUri = postLogoutRedirectUri,
+
+                    Notifications = new OpenIdConnectAuthenticationNotifications
                     {
-                        if (context.ProtocolMessage.RequestType == OpenIdConnectRequestType.LogoutRequest)
+                        SecurityTokenValidated = n =>
                         {
-                            var idToken = context.OwinContext.Authentication.User.Claims.FirstOrDefault(c => c.Type == "id_token")?.Value;
-                            context.ProtocolMessage.IdTokenHint = idToken;
-                        }
+                            var tokenId = n.ProtocolMessage.IdToken;
 
-                        return Task.FromResult(true);
+                            if (tokenId != null)
+                            {
+                                n.AuthenticationTicket.Identity.AddClaim(new Claim("id_token", tokenId));
+                            }
+
+                            return Task.FromResult(0);
+                        },
+
+                        RedirectToIdentityProvider = n =>
+                        {
+                            // if signing out, add the id_token_hint
+                            if (n.ProtocolMessage.RequestType == Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectRequestType.Logout)
+                            {
+                                var idTokenHint = n.OwinContext.Authentication.User.FindFirst("id_token");
+
+                                if (idTokenHint != null)
+                                {
+                                    n.ProtocolMessage.IdTokenHint = idTokenHint.Value;
+                                }
+
+                            }
+
+                            return Task.FromResult(0);
+                        }
                     },
-                    AuthorizationCodeReceived = async context =>
-                    {
-                        // Exchange code for access and ID tokens
-                        var tokenClient = new TokenClient(
-                            issuer + "/v1/token", clientId, clientSecret);
-                        var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(context.ProtocolMessage.Code, redirectUri);
-
-                        if (tokenResponse.IsError)
-                        {
-                            throw new Exception(tokenResponse.Error);
-                        }
-                        
-                        var userInfoClient = new UserInfoClient(issuer + "/v1/userinfo");
-                        var userInfoResponse = await userInfoClient.GetAsync(tokenResponse.AccessToken);
-
-                        var identity = new ClaimsIdentity();
-                        identity.AddClaims(userInfoResponse.Claims);
-
-                        identity.AddClaim(new Claim("id_token", tokenResponse.IdentityToken));
-                        identity.AddClaim(new Claim("access_token", tokenResponse.AccessToken));
-                        if (!string.IsNullOrEmpty(tokenResponse.RefreshToken))
-                        {
-                            identity.AddClaim(new Claim("refresh_token", tokenResponse.RefreshToken));
-                        }
-
-                        var nameClaim = new Claim(ClaimTypes.Name, userInfoResponse.Claims.FirstOrDefault(c => c.Type == "name")?.Value);
-                        identity.AddClaim(nameClaim);
-
-
-                        context.AuthenticationTicket = new AuthenticationTicket(
-                            new ClaimsIdentity(identity.Claims, context.AuthenticationTicket.Identity.AuthenticationType),
-                            context.AuthenticationTicket.Properties);
-                    }
                 }
-            });
+            );
         }
     }
 }

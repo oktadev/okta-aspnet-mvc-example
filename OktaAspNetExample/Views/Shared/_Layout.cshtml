@@ -28,7 +28,7 @@
                 {
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <p class="navbar-text">Hello, <b>@Context.User.Identity.Name</b></p>
+                            <p class="navbar-text">Hello, <b>@ViewBag.Username</b></p>
                         </li>
                         <li>@Html.ActionLink("View claims", "Claims", "Account")</li>
                         <li>
