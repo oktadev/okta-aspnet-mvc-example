@@ -46,8 +46,7 @@ namespace OktaAspNetExample
                     SecurityTokenValidated = n =>
                     {
                         var idToken = n.ProtocolMessage.IdToken;
-
-                        if (idToken != null)
+                        if (!string.IsNullOrEmpty(idToken))
                         {
                             n.AuthenticationTicket.Identity.AddClaim(new Claim("id_token", idToken));
                         }
