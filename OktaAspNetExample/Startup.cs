@@ -19,11 +19,11 @@ namespace OktaAspNetExample
     public class Startup
     {
         // These values are stored in Web.config. Make sure you update them!
-        string clientId = ConfigurationManager.AppSettings["okta:ClientId"];
-        string redirectUri = ConfigurationManager.AppSettings["okta:RedirectUri"];
-        string authority = ConfigurationManager.AppSettings["okta:Issuer"];
-        string clientSecret = ConfigurationManager.AppSettings["okta:ClientSecret"];
-        string postLogoutRedirectUri = ConfigurationManager.AppSettings["okta:PostLogoutRedirectUri"];
+        private readonly string clientId = ConfigurationManager.AppSettings["okta:ClientId"];
+        private readonly string redirectUri = ConfigurationManager.AppSettings["okta:RedirectUri"];
+        private readonly string authority = ConfigurationManager.AppSettings["okta:OrgUri"];
+        private readonly string clientSecret = ConfigurationManager.AppSettings["okta:ClientSecret"];
+        private readonly string postLogoutRedirectUri = ConfigurationManager.AppSettings["okta:PostLogoutRedirectUri"];
 
         /// <summary>
         /// Configure OWIN to use OpenID Connect to log in with Okta.
