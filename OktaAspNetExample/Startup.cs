@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Configuration;
 using System.Security.Claims;
+using IdentityModel.Client;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 
 [assembly: OwinStartup(typeof(OktaAspNetExample.Startup))]
 
@@ -43,15 +47,32 @@ namespace OktaAspNetExample
 
                 Notifications = new OpenIdConnectAuthenticationNotifications
                 {
-                    SecurityTokenValidated = n =>
+                    AuthorizationCodeReceived = async n => 
                     {
-                        var idToken = n.ProtocolMessage.IdToken;
-                        if (!string.IsNullOrEmpty(idToken))
+                        // Exchange code for access and ID tokens
+                        var tokenClient = new TokenClient(authority + "/v1/token", clientId, clientSecret);
+                        var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(n.Code, redirectUri);
+
+                        if (tokenResponse.IsError)
                         {
-                            n.AuthenticationTicket.Identity.AddClaim(new Claim("id_token", idToken));
+                            throw new Exception(tokenResponse.Error);
                         }
 
-                        return Task.CompletedTask;
+                        var userInfoClient = new UserInfoClient(authority + "/v1/userinfo");
+                        var userInfoResponse = await userInfoClient.GetAsync(tokenResponse.AccessToken);
+                        var claims = new List<Claim>();
+                        claims.AddRange(userInfoResponse.Claims);
+                        claims.Add(new Claim("id_token", tokenResponse.IdentityToken));
+                        claims.Add(new Claim("access_token", tokenResponse.AccessToken));
+
+                        if (!string.IsNullOrEmpty(tokenResponse.RefreshToken))
+                        {
+                            claims.Add(new Claim("refresh_token", tokenResponse.RefreshToken));
+                        }
+
+                        n.AuthenticationTicket.Identity.AddClaims(claims);
+
+                        return;
                     },
 
                     RedirectToIdentityProvider = n =>
