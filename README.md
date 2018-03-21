@@ -25,20 +25,20 @@ Or download a zip archive of the repository from GitHub and extract it on your m
 
 ### Create an application in Okta
 
-You will need to create an application in Okta to to perform authentication. 
+You will need to create an application in Okta to perform authentication. 
 
 Log in to your Okta Developer account (or [sign up](https://developer.okta.com/signup/) if you don’t have an account) and navigate to **Applications** > **Add Application**. Click **Web**, click **Next**, and give the app a name you’ll remember.
 
 Change the **Base URI** to:
 
 ```
-http://localhost:59896/
+http://localhost:8080/
 ```
 
 Change the **Login redirect URI** to:
 
 ```
-http://localhost:59896/authorization-code/callback
+http://localhost:8080/authorization-code/callback
 ```
 
 Click **Done**. On the General Settings screen, click **Edit**.
@@ -46,10 +46,10 @@ Click **Done**. On the General Settings screen, click **Edit**.
 Check **Implicit (Hybrid)** and **Allow ID Token**. Add a **Logout redirect URI**:
 
 ```
-http://localhost:59896/Account/PostLogout
+http://localhost:8080/Account/PostLogout
 ```
 
-**Note**: You can run the project in Visual Studio to see the port it is assigned on your machine. It may be different than 59896. In that case, you'll need to update the URIs in Okta.
+**Note**: You can run the project in Visual Studio to see the port it is assigned on your machine. It may be different than 8080. In that case, you'll need to update the URIs in Okta.
 
 Scroll to the bottom of the Okta application page to find the client ID and client secret. You'll need those values in the next step.
 
@@ -59,13 +59,13 @@ Open the `Web.config` file and update these values:
 
 * `okta:ClientId` - The client ID of the Okta application
 * `okta:ClientSecret` - The client secret of the Okta application
-* `okta:Issuer` - Replace `{yourOktaDomain}` with your Okta domain, found at the top-right of the Dashboard page, or in the address bar.
+* `okta:OrgUri` - Replace `{yourOktaDomain}` with your Okta domain, found at the top-right of the Dashboard page, or in the address bar.
 
 **Note:** The value of `{yourOktaDomain}` should be something like `dev-123456.oktapreview.com`. Make sure you don't include `-admin` in the value!
 
 ### Start the application
 
-Use Visual Studio to run the project. It should start up on `http://localhost:59896`. (If it doesn't, update the URLs in Okta and in `Web.config`)
+Use Visual Studio to run the project. It should start up on `http://localhost:8080`. (If it doesn't, update the URLs in Okta and in `Web.config`)
 
 ## Links
 
