@@ -10,9 +10,6 @@ namespace OktaAspNetExample.Controllers
     {
         public ActionResult Index()
         {
-            var nameClaim = HttpContext.GetOwinContext().Authentication.User.FindFirst("name");
-            ViewBag.Username = nameClaim?.Value ?? string.Empty;
-
             return View();
         }
 

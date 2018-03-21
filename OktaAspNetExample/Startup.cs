@@ -9,8 +9,8 @@ using System.Configuration;
 using System.Security.Claims;
 using IdentityModel.Client;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using Microsoft.IdentityModel.Tokens;
 
 [assembly: OwinStartup(typeof(OktaAspNetExample.Startup))]
 
@@ -44,6 +44,10 @@ namespace OktaAspNetExample
                 ResponseType = OpenIdConnectResponseType.CodeIdToken,
                 Scope = OpenIdConnectScope.OpenIdProfile,
                 PostLogoutRedirectUri = postLogoutRedirectUri,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = "name"
+                },
 
                 Notifications = new OpenIdConnectAuthenticationNotifications
                 {
