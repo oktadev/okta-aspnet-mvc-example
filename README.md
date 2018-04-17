@@ -18,7 +18,7 @@ You can follow the **[ quickstart](https://developer.okta.com/quickstart/#/okta-
 To install this example application, clone this repository with Git:
 
 ```bash
-git clone git@github.com:oktadeveloper/okta-aspnet-mvc-example.git
+git clone https://github.com/oktadeveloper/okta-aspnet-mvc-example.git
 ```
 
 Or download a zip archive of the repository from GitHub and extract it on your machine.
