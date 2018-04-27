@@ -59,7 +59,7 @@ Open the `Web.config` file and update these values:
 
 * `okta:ClientId` - The client ID of the Okta application
 * `okta:ClientSecret` - The client secret of the Okta application
-* `okta:OrgUri` - Replace `{yourOktaDomain}` with your Okta domain, found at the top-right of the Dashboard page, or in the address bar.
+* `okta:OrgUri` - Replace `{yourOktaDomain}` with your Okta domain, found at the top-right of the Dashboard page.
 
 **Note:** The value of `{yourOktaDomain}` should be something like `dev-123456.oktapreview.com`. Make sure you don't include `-admin` in the value!
 
