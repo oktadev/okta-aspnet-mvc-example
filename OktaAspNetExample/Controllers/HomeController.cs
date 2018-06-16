@@ -26,5 +26,12 @@ namespace OktaAspNetExample.Controllers
 
             return View();
         }
+
+        public ActionResult AuthNError()
+        {
+            ViewBag.Message = "An authentication error occurred";
+            
+            return View();
+        }
     }
 }

@@ -10,6 +10,7 @@ using System.Security.Claims;
 using IdentityModel.Client;
 using System;
 using System.Collections.Generic;
+using System.Web;
 using Microsoft.IdentityModel.Tokens;
 
 [assembly: OwinStartup(typeof(OktaAspNetExample.Startup))]
@@ -94,6 +95,14 @@ namespace OktaAspNetExample
                         }
 
                         return Task.CompletedTask;
+                    },
+
+                    AuthenticationFailed = n =>
+                    {
+                        n.HandleResponse();
+                        n.Response.Redirect($"/Home/AuthNError?message={HttpUtility.UrlEncode(n.Exception?.Message ?? "Unknown error")}");
+
+                        return Task.FromResult(0);
                     }
                 },
             });
