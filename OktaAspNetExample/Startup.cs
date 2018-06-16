@@ -53,8 +53,10 @@ namespace OktaAspNetExample
                 {
                     AuthorizationCodeReceived = async n => 
                     {
+                        OpenIdConnectConfiguration config = await n.Options.ConfigurationManager.GetConfigurationAsync(n.Request.CallCancelled).ConfigureAwait(false);
+
                         // Exchange code for access and ID tokens
-                        var tokenClient = new TokenClient(authority + "/v1/token", clientId, clientSecret);
+                        var tokenClient = new TokenClient(config.TokenEndpoint, clientId, clientSecret);
                         var tokenResponse = await tokenClient.RequestAuthorizationCodeAsync(n.Code, redirectUri);
 
                         if (tokenResponse.IsError)
@@ -62,7 +64,7 @@ namespace OktaAspNetExample
                             throw new Exception(tokenResponse.Error);
                         }
 
-                        var userInfoClient = new UserInfoClient(authority + "/v1/userinfo");
+                        var userInfoClient = new UserInfoClient(config.UserInfoEndpoint);
                         var userInfoResponse = await userInfoClient.GetAsync(tokenResponse.AccessToken);
                         var claims = new List<Claim>();
                         claims.AddRange(userInfoResponse.Claims);
